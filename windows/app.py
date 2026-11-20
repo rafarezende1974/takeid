@@ -359,12 +359,12 @@ class App:
             import io
             from dx_labs_logo_b64 import DATA
             img = Image.open(io.BytesIO(base64.b64decode("".join(DATA))))
-            w = 196
+            w = 160
             img = img.resize((w, int(w * img.height / img.width)),
                              Image.LANCZOS)
             self._footer_logo = ImageTk.PhotoImage(img)
             tk.Label(sidebar, image=self._footer_logo,
-                     bg=SIDEBAR).pack(side="bottom", pady=16)
+                     bg=SIDEBAR).pack(side="bottom", pady=(0, 30))
             return
         except Exception:
             pass
