@@ -313,21 +313,15 @@ class App:
         sidebar.pack(side="left", fill="y")
         sidebar.pack_propagate(False)
         self.sidebar = sidebar
-        # Topo da sidebar: icone da claquete + DX Rename by DX Labs.
-        # Fonte 15 (não 18) e logo 40px: com 18 o título pedia 147px
-        # e só cabiam ~116px, cortando o nome na borda da sidebar.
+        # Topo da sidebar: logo do DX Rename centralizada no espaco
+        # acima do menu; o botao Renomear alinha com a linha de
+        # filtros (Todos/JPG/RAW/Videos) da area principal (y=93).
         head = tk.Frame(sidebar, bg=SIDEBAR)
-        head.pack(fill="x", padx=10, pady=(14, 6))
+        head.pack(fill="x", padx=10, pady=(32, 6))
         self._sidebar_logo(head)
-        titles = tk.Frame(head, bg=SIDEBAR)
-        titles.pack(side="left")
-        tk.Label(titles, text="DX Rename", bg=SIDEBAR, fg=FG,
-                 font=("", 15, "bold")).pack(anchor="w")
-        tk.Label(titles, text="by DX Labs", bg=SIDEBAR, fg=FG_MUTED,
-                 font=("", 10)).pack(anchor="w")
         # Menu vertical: um so sistema de navegacao.
         nav = tk.Frame(sidebar, bg=SIDEBAR)
-        nav.pack(fill="x", pady=10)
+        nav.pack(fill="x", pady=(16, 10))
         self.nav_buttons = {}
         items = [
             ("renomear", "⇄  Renomear"),
@@ -372,28 +366,27 @@ class App:
                  font=("", 13, "bold")).pack(side="bottom", pady=16)
 
     def _sidebar_logo(self, parent):
-        """Icone da claquete: usa assets/icon.png se existir (gerado
-        pelo workflow no runner); senao desenha uma claquete roxa."""
-        icon_path = assets_dir() / "icon.png"
+        """Topo da sidebar: logo do DX Rename (lockup horizontal,
+        embutida em base64); se falhar, volta o titulo em texto."""
         try:
             from PIL import Image, ImageTk
-            img = Image.open(icon_path).resize((40, 40))
-            self._logo_photo = ImageTk.PhotoImage(img)
-            tk.Label(parent, image=self._logo_photo,
-                     bg=SIDEBAR).pack(side="left", padx=(2, 8))
+            import base64
+            import io
+            from dx_rename_logo_b64 import DATA
+            img = Image.open(io.BytesIO(base64.b64decode("".join(DATA))))
+            w = 200
+            img = img.resize((w, int(w * img.height / img.width)),
+                             Image.LANCZOS)
+            self._header_logo = ImageTk.PhotoImage(img)
+            tk.Label(parent, image=self._header_logo,
+                     bg=SIDEBAR).pack()
             return
         except Exception:
             pass
-        canvas = tk.Canvas(parent, width=48, height=48, bg=SIDEBAR,
-                           highlightthickness=0)
-        canvas.pack(side="left", padx=(2, 8))
-        canvas.create_rectangle(6, 16, 42, 44, fill="#7B1FD0",
-                                outline="#4A0E7A", width=2)
-        canvas.create_polygon([(8, 16), (40, 6), (44, 14), (12, 22)],
-                              fill="#A855F7", outline="#4A0E7A")
-        for i, x0 in enumerate((12, 22, 32)):
-            canvas.create_polygon([(x0, 14), (x0 + 6, 12), (x0 + 8, 18),
-                                   (x0 + 2, 20)], fill="#E9D5FF")
+        tk.Label(parent, text="DX Rename", bg=SIDEBAR, fg=FG,
+                 font=("", 15, "bold")).pack(anchor="w")
+        tk.Label(parent, text="by DX Labs", bg=SIDEBAR, fg=FG_MUTED,
+                 font=("", 10)).pack(anchor="w")
         canvas.create_polygon([(12, 42), (22, 30), (30, 38), (36, 32),
                                (40, 42)], fill="#E9D5FF")
 
