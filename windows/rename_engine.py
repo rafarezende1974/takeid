@@ -1,10 +1,10 @@
-"""TakeID 1.0.0 by DX Labs — motor de renomeacao em lote (Windows).
+"""DX Rename 1.0.0 by DX Labs — motor de renomeacao em lote (Windows).
 
 Motor puro, sem Tkinter e sem dependencia de tela: classifica arquivos,
 pareia JPG+RAW, calcula sequencias, monta nomes a partir de um padrao
 com tokens, valida conflitos e aplica o lote com seguranca.
 
-Regras duras (do plano DX Rename / manual TakeID):
+Regras duras (do plano DX Rename / manual DX Rename):
   * nada e renomeado sem preview — este motor so calcula o plano;
     a aplicacao so acontece em apply_plan(), depois da confirmacao.
   * conflitos BLOQUEIAM o lote: duplicado, destino existente,
@@ -53,7 +53,7 @@ RESERVED_NAMES = {
     *(f"COM{i}" for i in range(1, 10)),
     *(f"LPT{i}" for i in range(1, 10)),
 }
-MAX_NAME_LEN = 240  # limite do motor (manual TakeID); Windows: 255
+MAX_NAME_LEN = 240  # limite do motor (manual DX Rename); Windows: 255
 
 TOKEN_RE = re.compile(r"\{([^{}]+)\}")
 SIMPLE_TOKENS = {
@@ -135,7 +135,7 @@ class Settings:
     pattern: str = "{evento}_{tipo}_{seq:0000}"
     evento: str = "EXPO2026"
     cliente: str = ""
-    tipo_foto: str = "FOTO"      # configuravel; padrao TakeID
+    tipo_foto: str = "FOTO"      # configuravel; padrao DX Rename
     tipo_video: str = "TAKE"     # mockup usa TAKE; manual usava VIDEO
     tipo_arquivo: str = "ARQUIVO"
     inicio_fotos: int = 1
@@ -376,7 +376,7 @@ def _rename_two_pass(pairs, log_dir=None):
     errors: list[str] = []
     temps: list[tuple[Path, Path, Path]] = []  # (origem, temp, destino)
     for i, (src, dst) in enumerate(pairs):
-        tmp = src.parent / f".takeid-{uuid.uuid4().hex[:10]}-{i}{src.suffix}"
+        tmp = src.parent / f".dxrename-{uuid.uuid4().hex[:10]}-{i}{src.suffix}"
         try:
             src.rename(tmp)
             temps.append((src, tmp, dst))

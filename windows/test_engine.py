@@ -1,4 +1,4 @@
-"""Testes do motor TakeID — sem fotos reais, sem tela.
+"""Testes do motor DX Rename — sem fotos reais, sem tela.
 
 Rode:  python3 test_engine.py
 Cria arquivos temporarios (JPG de verdade via Pillow, RAW/video

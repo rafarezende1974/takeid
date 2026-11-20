@@ -1,4 +1,4 @@
-"""TakeID 1.0.0 by DX Labs — renomeacao em lote (Windows).
+"""DX Rename 1.0.0 by DX Labs — renomeacao em lote (Windows).
 
 Tkinter, visual do mockup: janela escura azul-marinho, sidebar com
 a navegacao, tabela CLARA com miniaturas e painel direito escuro.
@@ -33,7 +33,7 @@ from rename_engine import (
 )
 
 VERSION = "1.0.0"
-TITLE = f"TakeID {VERSION} by DX Labs"
+TITLE = f"DX Rename {VERSION} by DX Labs"
 
 # Cores do mockup.
 BG = "#15102B"            # fundo da janela
@@ -48,9 +48,9 @@ DANGER_BG = "#4A0E14"
 LIGHT_BG = "#F2EFFA"      # tabela clara
 LIGHT_FG = "#1A1033"
 
-# Presets que vem prontos (editaveis; salvos em takeid_dados/).
+# Presets que vem prontos (editaveis; salvos em dxrename_dados/).
 DEFAULT_PRESETS = [
-    {"nome": "Padrão TakeID",
+    {"nome": "Padrão DX Rename",
      "settings": {"pattern": "{evento}_{tipo}_{seq:0000}",
                   "evento": "EXPO2026", "cliente": "",
                   "tipo_foto": "FOTO", "tipo_video": "TAKE",
@@ -92,7 +92,15 @@ def app_dir() -> Path:
 
 
 def data_dir() -> Path:
-    d = app_dir() / "takeid_dados"
+    d = app_dir() / "dxrename_dados"
+    # Migração da v1.0.0 (o app se chamava TakeID): se a pasta
+    # antiga existir e a nova não, aproveita presets e histórico.
+    old = app_dir() / "takeid_dados"
+    if old.exists() and not d.exists():
+        try:
+            old.rename(d)
+        except OSError:
+            pass
     d.mkdir(parents=True, exist_ok=True)
     return d
 
@@ -296,13 +304,13 @@ class App:
         sidebar.pack(side="left", fill="y")
         sidebar.pack_propagate(False)
         self.sidebar = sidebar
-        # Topo da sidebar: icone da claquete + TakeID by DX Labs.
+        # Topo da sidebar: icone da claquete + DX Rename by DX Labs.
         head = tk.Frame(sidebar, bg=SIDEBAR)
         head.pack(fill="x", padx=12, pady=(14, 6))
         self._sidebar_logo(head)
         titles = tk.Frame(head, bg=SIDEBAR)
         titles.pack(side="left")
-        tk.Label(titles, text="TakeID", bg=SIDEBAR, fg=FG,
+        tk.Label(titles, text="DX Rename", bg=SIDEBAR, fg=FG,
                  font=("", 18, "bold")).pack(anchor="w")
         tk.Label(titles, text="by DX Labs", bg=SIDEBAR, fg=FG_MUTED,
                  font=("", 10)).pack(anchor="w")
@@ -730,7 +738,7 @@ class App:
     def _panel_sobre(self, parent):
         tab = tk.Frame(parent, bg=BG_PANEL)
         self._section(tab, "Sobre")
-        tk.Label(tab, text=f"TakeID {VERSION} by DX Labs",
+        tk.Label(tab, text=f"DX Rename {VERSION} by DX Labs",
                  bg=BG_PANEL, fg=FG, font=("", 12, "bold")).pack(
                      anchor="w")
         tk.Label(tab, wraplength=315, justify="left", bg=BG_PANEL,
@@ -916,7 +924,7 @@ class App:
             self.sort_items()
             self.refresh()
         elif paths:
-            messagebox.showinfo("TakeID", "Os arquivos escolhidos já "
+            messagebox.showinfo("DX Rename", "Os arquivos escolhidos já "
                                 "estão na lista.")
 
     def clear_list(self):
@@ -1130,12 +1138,12 @@ class App:
     def apply_preset(self):
         sel = self.preset_list.curselection()
         if not sel:
-            messagebox.showinfo("TakeID", "Escolha um preset na lista.")
+            messagebox.showinfo("DX Rename", "Escolha um preset na lista.")
             return
         preset = self.presets[sel[0]]
         self.apply_settings(preset["settings"])
         self.padrao_combo_var.set(preset["nome"])
-        messagebox.showinfo("TakeID",
+        messagebox.showinfo("DX Rename",
                             f"Preset “{preset['nome']}” aplicado.")
 
     def save_preset(self):
@@ -1155,7 +1163,7 @@ class App:
         if not sel:
             return
         name = self.presets[sel[0]]["nome"]
-        if not messagebox.askyesno("TakeID",
+        if not messagebox.askyesno("DX Rename",
                                    f"Excluir o preset “{name}”?"):
             return
         del self.presets[sel[0]]
@@ -1200,13 +1208,13 @@ class App:
     def do_rename(self):
         selected = [e for e in self.plan if not e.no_change]
         if not selected:
-            messagebox.showinfo("TakeID", "Nada para renomear: os "
+            messagebox.showinfo("DX Rename", "Nada para renomear: os "
                                 "arquivos selecionados já têm o nome "
                                 "proposto.")
             return
         if has_conflicts(self.plan):
             messagebox.showwarning(
-                "TakeID", "Há conflitos na lista. Resolva ou retire "
+                "DX Rename", "Há conflitos na lista. Resolva ou retire "
                 "os arquivos com conflito antes de renomear.")
             return
         exemplo = (f"{selected[0].original_name}  ->  "
@@ -1220,11 +1228,11 @@ class App:
         try:
             result = apply_plan(self.plan, self.data)
         except ValueError as exc:
-            messagebox.showerror("TakeID", str(exc))
+            messagebox.showerror("DX Rename", str(exc))
             return
         if result["erros"]:
             messagebox.showwarning(
-                "TakeID",
+                "DX Rename",
                 "O lote não foi aplicado e os arquivos foram "
                 "restaurados.\n\n" + "\n".join(result["erros"]))
             self.refresh()
@@ -1244,12 +1252,12 @@ class App:
             msg += f" · {result['pulados']} já estava(m) com o nome certo"
         msg += (f"\n\nLog de/para salvo em:\n{result['log_csv']}\n"
                 "Use “Desfazer último lote” para restaurar os nomes.")
-        messagebox.showinfo("TakeID — lote aplicado", msg)
+        messagebox.showinfo("DX Rename — lote aplicado", msg)
         self.refresh()
 
     def do_undo(self):
         if not load_last_log(self.data):
-            messagebox.showinfo("TakeID", "Não há lote para desfazer.")
+            messagebox.showinfo("DX Rename", "Não há lote para desfazer.")
             return
         if not messagebox.askyesno(
                 "Desfazer último lote",
@@ -1258,13 +1266,13 @@ class App:
         result = undo_last_batch(self.data)
         if result["erros"]:
             messagebox.showwarning(
-                "TakeID — desfazer parcial",
+                "DX Rename — desfazer parcial",
                 f"{result['restaurados']} restaurado(s), "
                 f"{result['pulados']} pulado(s).\n\n"
                 + "\n".join(result["erros"]))
         else:
             messagebox.showinfo(
-                "TakeID", f"{result['restaurados']} arquivo(s) "
+                "DX Rename", f"{result['restaurados']} arquivo(s) "
                 "restaurado(s) com os nomes originais.")
         self.refresh()
 

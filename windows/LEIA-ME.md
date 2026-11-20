@@ -1,4 +1,4 @@
-# TakeID 1.0.0 by DX Labs — renomeação em lote (Windows)
+# DX Rename 1.0.0 by DX Labs — renomeação em lote (Windows)
 
 Renomeia fotos, arquivos RAW e vídeos em lote, no padrão
 `{evento}_{tipo}_{seq:0000}` — ex.: `EXPO2026_FOTO_0001.JPG`,
@@ -8,7 +8,7 @@ Recomeço no padrão DX Labs (Python + Tkinter, `.exe` portátil via
 GitHub Actions). Não é Flutter e não usa o código feito no ChatGPT
 (série 0.3, sem build certificado, sem EXIF, sem presets e sem
 Desfazer persistente). O nome, o visual roxo e o exemplo canônico
-vêm do mockup do TakeID.
+vêm do mockup do DX Rename.
 
 ## O que faz na v1.0.0
 
@@ -24,7 +24,7 @@ vêm do mockup do TakeID.
   preset permite trocar para VIDEO se preferir)
 - Tokens: `{evento} {tipo} {nome} {seq} {seq:0000} {data} {datafoto}
   {hora} {cliente} {ext} {pasta}` + `{original}` (alias de `{nome}`)
-- Presets prontos e editáveis, salvos neste PC: Padrão TakeID,
+- Presets prontos e editáveis, salvos neste PC: Padrão DX Rename,
   Casamento, Ensaio, Evento corporativo, Feira / Estande, Só numerar
 - Data da foto via EXIF (JPG, `DateTimeOriginal`); sem EXIF, usa a
   data de modificação e mostra o selo "sem EXIF"
@@ -51,7 +51,7 @@ vêm do mockup do TakeID.
 
 1. **Copie uma pasta pequena (20 a 50 arquivos de um evento) para
    uma pasta de teste — nunca teste direto na pasta original.**
-2. Abra o `TakeID.exe`, clique em "Adicionar Pasta" e escolha a
+2. Abra o `DXRename.exe`, clique em "Adicionar Pasta" e escolha a
    pasta de teste.
 3. Confira a prévia: pares JPG+RAW com o mesmo número, vídeos
    com TAKE e a sequência certa. Resolva qualquer linha vermelha.
@@ -124,10 +124,10 @@ nesta pasta — **não vai ao repo** (está no `.gitignore`).
    `requirements.txt`, `test_engine.py`, `LEIA-ME.md`,
    `WORKFLOW-BUILD-WINDOWS.yml.txt`, `.gitignore`.
    Não subir `assets/` (o workflow gera o ícone no runner) nem
-   `takeid_dados/` (presets, logs e histórico locais).
+   `dxrename_dados/` (presets, logs e histórico locais).
 3. Criar pela web o arquivo `.github/workflows/build-windows.yml`
    colando o conteúdo de `WORKFLOW-BUILD-WINDOWS.yml.txt`.
-4. O build gera o artefato `takeid` com `TakeID.exe`.
+4. O build gera o artefato `dx-rename` com `DXRename.exe`.
    Apagar o .exe antigo antes de baixar o novo — os artefatos
    têm o mesmo nome.
 
@@ -137,7 +137,7 @@ padrão para .exe sem assinatura, igual ao dos outros apps DX.
 
 ## Arquivos
 
-- `app.py` — interface Tkinter (janela "TakeID 1.0.0 by DX Labs")
+- `app.py` — interface Tkinter (janela "DX Rename 1.0.0 by DX Labs")
 - `rename_engine.py` — motor puro: classificação, pareamento,
   tokens, validação, aplicação em duas passadas, log e desfazer
 - `generate_assets.py` — gera o ícone (claquete roxa, próprio
@@ -145,5 +145,5 @@ padrão para .exe sem assinatura, igual ao dos outros apps DX.
 - `test_engine.py` — testes do motor com arquivos temporários
   (rode com `python test_engine.py`; não precisa de fotos reais
   nem de tela)
-- `takeid_dados/` — criado na primeira execução, ao lado do .exe:
+- `dxrename_dados/` — criado na primeira execução, ao lado do .exe:
   `presets.json`, `ultimo_lote.json/.csv`, `historico.json`

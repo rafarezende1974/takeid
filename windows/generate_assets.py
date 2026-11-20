@@ -1,4 +1,4 @@
-"""Gera o icone do TakeID no runner (nada de binario no repo).
+"""Gera o icone do DX Rename no runner (nada de binario no repo).
 
 Icone proprio, relacionado a funcao — claquete roxa com imagem de
 foto/video dentro — e nao o simbolo da DX Labs (regra dele: cada

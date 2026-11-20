@@ -4,6 +4,6 @@ build/
 *.spec
 assets/icon.png
 assets/icon.ico
-TakeID.exe
-takeid_dados/
+DXRename.exe
+dxrename_dados/
 visual_check.png

@@ -1,4 +1,4 @@
-# TakeID by DX Labs
+# DX Rename by DX Labs
 
 Renomeação de arquivos em lote para fotografias, arquivos RAW e vídeos — Windows e Android.
 
