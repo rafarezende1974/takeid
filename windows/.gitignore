@@ -1,0 +1,8 @@
+__pycache__/
+dist/
+build/
+*.spec
+assets/icon.png
+assets/icon.ico
+TakeID.exe
+takeid_dados/
