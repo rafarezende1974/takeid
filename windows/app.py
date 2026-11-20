@@ -91,6 +91,15 @@ def app_dir() -> Path:
     return Path(__file__).parent
 
 
+def assets_dir() -> Path:
+    """Pasta de imagens: dentro do .exe empacotado (PyInstaller
+    --add-data, _MEIPASS) ou, rodando do fonte, windows/assets/."""
+    meipass = getattr(sys, "_MEIPASS", None)
+    if meipass:
+        return Path(meipass) / "assets"
+    return app_dir() / "assets"
+
+
 def data_dir() -> Path:
     d = app_dir() / "dxrename_dados"
     # Migração da v1.0.0 (o app se chamava TakeID): se a pasta
@@ -337,15 +346,35 @@ class App:
                             command=lambda k=key: self._show_view(k))
             btn.pack(fill="x", padx=8, pady=2)
             self.nav_buttons[key] = btn
-        tk.Label(sidebar, text="DX Labs", bg=SIDEBAR, fg=FG,
-                 font=("", 13, "bold")).pack(side="bottom", pady=16)
+        self._sidebar_footer(sidebar)
         self.main = tk.Frame(self.root, bg=BG)
         self.main.pack(side="right", fill="both", expand=True)
+
+    def _sidebar_footer(self, sidebar):
+        """Rodape da sidebar: logo da DX Labs (assets/dx_labs_logo.png,
+        fundo transparente) no lugar do texto 'DX Labs'."""
+        try:
+            from PIL import Image, ImageTk
+            import base64
+            import io
+            from dx_labs_logo_b64 import DATA
+            img = Image.open(io.BytesIO(base64.b64decode("".join(DATA))))
+            w = 196
+            img = img.resize((w, int(w * img.height / img.width)),
+                             Image.LANCZOS)
+            self._footer_logo = ImageTk.PhotoImage(img)
+            tk.Label(sidebar, image=self._footer_logo,
+                     bg=SIDEBAR).pack(side="bottom", pady=16)
+            return
+        except Exception:
+            pass
+        tk.Label(sidebar, text="DX Labs", bg=SIDEBAR, fg=FG,
+                 font=("", 13, "bold")).pack(side="bottom", pady=16)
 
     def _sidebar_logo(self, parent):
         """Icone da claquete: usa assets/icon.png se existir (gerado
         pelo workflow no runner); senao desenha uma claquete roxa."""
-        icon_path = app_dir() / "assets" / "icon.png"
+        icon_path = assets_dir() / "icon.png"
         try:
             from PIL import Image, ImageTk
             img = Image.open(icon_path).resize((40, 40))
