@@ -31,10 +31,10 @@ jobs:
         run: python generate_assets.py
 
       - name: Build EXE (PyInstaller, arquivo unico)
-        run: pyinstaller --noconfirm --clean --onefile --windowed --name TakeID --icon assets/icon.ico app.py
+        run: pyinstaller --noconfirm --clean --onefile --windowed --name DXRename --icon assets/icon.ico app.py
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: takeid
-          path: windows/dist/TakeID.exe
+          name: dx-rename
+          path: windows/dist/DXRename.exe
