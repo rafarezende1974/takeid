@@ -59,6 +59,64 @@ vêm do mockup do TakeID.
 5. Clique em "Desfazer último lote" e confira que os nomes
    originais voltaram. Só depois use numa pasta real.
 
+## Visual (redesenho v1.0.0, igual ao mockup)
+
+Janela 1360×820, redimensionável, fundo azul-marinho escuro
+`#15102B`, painéis `#241A45`, destaque roxo `#8B2CE8` / `#A855F7`,
+texto branco e secundário `#B8AED6`. Barra de título escura no
+Windows 10/11 (via DWM, `DwmSetWindowAttribute`); no Linux ou em
+Windows antigo a barra segue o tema do sistema — o cabeçalho
+escuro dentro da janela existe de qualquer forma.
+
+**Uma só navegação, pela sidebar** (a tabela fica sempre visível e
+o painel direito troca de conteúdo — não há mais as abas
+Padrão/Presets/Metadados/Histórico/Sobre duplicando a navegação):
+
+| Sidebar | Painel direito |
+|---|---|
+| Renomear | Padrão (estrutura, chips de token, Numeração, interruptores) |
+| Presets | Presets salvos (aplicar / salvar / excluir) |
+| Metadados (EXIF) | Dados do arquivo selecionado (EXIF, tamanho, dimensões) |
+| Regras Avançadas | Parear JPG+RAW, Evento, Cliente, Tipo foto/vídeo, Início vídeos, Formato da data |
+| Histórico | Lotes aplicados, com detalhe de/para (estado vazio quando não há nenhum) |
+| Configurações | Início fotos/vídeos, Dígitos, Formato da data, Tipos, pasta de dados |
+| Sobre | Sobre o app, versão e repositório |
+
+- **Tabela em cartão claro** (`#F2EFFA`, texto `#1A1033`,
+  cabeçalho roxo escuro com texto branco, linha de 48 px para a
+  miniatura): checkbox, miniatura, Arquivo Original, Novo Nome
+  (Prévia), Tipo, Data completa (`02/10/2026`, com `(sem EXIF)`
+  quando não há EXIF) e Status (OK / motivo do conflito).
+- **Chips de token** (clicáveis, inserem no cursor do campo da
+  estrutura): Evento `{evento}`, Tipo `{tipo}`, Data `{datafoto}`,
+  Câmera `{pasta}` (nome da pasta-mãe = câmera/cartão),
+  Seq. `{seq:0000}` (segue os Dígitos) e Texto `{nome}`.
+- **Numeração:** Iniciar em (fotos), Dígitos (reescreve o
+  `{seq:0000}` do padrão) e Tipo (só Crescente — o motor só
+  suporta ordem crescente).
+- **Interruptores** no estilo do mockup (pílula roxa/cinza,
+  desenhados em Canvas): Manter extensão (sempre ligado, o motor
+  nunca troca a extensão), Usar data do arquivo, Padronizar para
+  MAIÚSCULAS e Substituir espaços por `_`.
+- **Rodapé:** círculo verde com check + "N arquivo(s)
+  selecionado(s)" e a linha de validade, botão grande roxo
+  "Renomear Arquivos" e "Desfazer último lote" ao lado.
+- **Nenhum painel fica em branco:** Histórico sem lotes mostra
+  "Nenhum lote aplicado ainda." com explicação; Metadados sem
+  seleção mostra a instrução.
+
+**Diferenças do mockup por limitação do Tkinter:** sem cantos
+arredondados nos cartões/botões; os ícones da sidebar são glifos
+Unicode (⇄ ▤ ◉ { } ↺ ⚙ ⓘ) e não os ícones desenhados do mockup;
+a coluna Status é extra (o mockup não a tem, mas é nela que o
+motivo do conflito aparece); não há aba "Substituir" — localizar
+e substituir e regex ficam para a v1.1, com aviso no painel
+Regras; o logo da sidebar usa `assets/icon.png` gerado pelo
+workflow (sem ele, desenha uma claquete simples).
+
+Screenshot da checagem visual (1360×820, Xvfb): `visual_check.png`
+nesta pasta — **não vai ao repo** (está no `.gitignore`).
+
 ## Build (mesmo esquema do DX Select)
 
 1. Criar o repositório no GitHub pela web: `rafarezende1974/takeid`.
