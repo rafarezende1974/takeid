@@ -300,18 +300,20 @@ class App:
 
     def _build_shell(self):
         """Sidebar (esquerda) + area principal (direita)."""
-        sidebar = tk.Frame(self.root, bg=SIDEBAR, width=200)
+        sidebar = tk.Frame(self.root, bg=SIDEBAR, width=232)
         sidebar.pack(side="left", fill="y")
         sidebar.pack_propagate(False)
         self.sidebar = sidebar
         # Topo da sidebar: icone da claquete + DX Rename by DX Labs.
+        # Fonte 15 (não 18) e logo 40px: com 18 o título pedia 147px
+        # e só cabiam ~116px, cortando o nome na borda da sidebar.
         head = tk.Frame(sidebar, bg=SIDEBAR)
-        head.pack(fill="x", padx=12, pady=(14, 6))
+        head.pack(fill="x", padx=10, pady=(14, 6))
         self._sidebar_logo(head)
         titles = tk.Frame(head, bg=SIDEBAR)
         titles.pack(side="left")
         tk.Label(titles, text="DX Rename", bg=SIDEBAR, fg=FG,
-                 font=("", 18, "bold")).pack(anchor="w")
+                 font=("", 15, "bold")).pack(anchor="w")
         tk.Label(titles, text="by DX Labs", bg=SIDEBAR, fg=FG_MUTED,
                  font=("", 10)).pack(anchor="w")
         # Menu vertical: um so sistema de navegacao.
@@ -346,7 +348,7 @@ class App:
         icon_path = app_dir() / "assets" / "icon.png"
         try:
             from PIL import Image, ImageTk
-            img = Image.open(icon_path).resize((48, 48))
+            img = Image.open(icon_path).resize((40, 40))
             self._logo_photo = ImageTk.PhotoImage(img)
             tk.Label(parent, image=self._logo_photo,
                      bg=SIDEBAR).pack(side="left", padx=(2, 8))
