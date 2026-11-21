@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.DxRename" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">#12101A</item>
+        <item name="android:textColor">#F2F2F2</item>
+    </style>
+</resources>
