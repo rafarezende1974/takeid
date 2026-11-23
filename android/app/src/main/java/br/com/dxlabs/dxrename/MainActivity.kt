@@ -9,6 +9,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -388,7 +389,16 @@ class MainActivity : ComponentActivity() {
         val scroll = rememberScrollState()
         Column(modifier = Modifier.fillMaxSize().verticalScroll(scroll)) {
             Text("Preset", fontWeight = FontWeight.Bold)
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(vertical = 8.dp)) {
+            // FlowRow: os 6 presets não cabem numa linha só no celular. Numa Row
+            // comum eles estouravam para fora da tela e o botão longo ("Só numerar…")
+            // quebrava o texto em 2 linhas fora da tela, deixando a linha alta e
+            // um vão vazio entre os presets e o campo Padrão. Aqui eles quebram
+            // de linha e todos ficam visíveis e tocáveis.
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(vertical = 8.dp)
+            ) {
                 Presets.ALL.forEachIndexed { i, p ->
                     OutlinedButton(
                         onClick = { onPreset(i) },
