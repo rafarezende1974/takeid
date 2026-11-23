@@ -394,6 +394,7 @@ class MainActivity : ComponentActivity() {
             var presetMenuOpen by remember { mutableStateOf(false) }
             OutlinedButton(
                 onClick = { presetMenuOpen = true },
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
                 modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
             ) {
                 Text(Presets.ALL[presetIndex].nome, modifier = Modifier.weight(1f))
@@ -408,13 +409,14 @@ class MainActivity : ComponentActivity() {
                             Presets.ALL.forEachIndexed { i, p ->
                                 TextButton(
                                     onClick = { presetMenuOpen = false; onPreset(i) },
+                                    colors = ButtonDefaults.textButtonColors(contentColor = Color.White),
                                     modifier = Modifier.fillMaxWidth()
                                 ) { Text(p.nome, modifier = Modifier.fillMaxWidth()) }
                             }
                         }
                     },
                     confirmButton = {},
-                    dismissButton = { TextButton(onClick = { presetMenuOpen = false }) { Text("Cancelar") } }
+                    dismissButton = { TextButton(onClick = { presetMenuOpen = false }, colors = ButtonDefaults.textButtonColors(contentColor = Color.White)) { Text("Cancelar") } }
                 )
             }
             OutlinedTextField(
