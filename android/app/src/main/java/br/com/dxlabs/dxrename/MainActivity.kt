@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
@@ -29,6 +30,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.darkColorScheme
@@ -70,6 +72,12 @@ class MainActivity : ComponentActivity() {
         var files by remember { mutableStateOf<List<DocumentFile>>(emptyList()) }
         var settings by remember { mutableStateOf(RenameEngine.Settings()) }
         var presetIndex by remember { mutableIntStateOf(0) }
+        // true quando o usuário digitou o próprio padrão no campo Padrão.
+        // Nesse caso, tocar num preset pede confirmação antes de apagar
+        // o padrão dele (o Windows mostra "Preset aplicado"; aqui antes
+        // a troca era silenciosa e o padrão sumia sem aviso).
+        var patternCustom by remember { mutableStateOf(false) }
+        var pendingPreset by remember { mutableStateOf<Int?>(null) }
         var status by remember { mutableStateOf("") }
         var renaming by remember { mutableStateOf(false) }
         var undoAvailable by remember {
@@ -121,8 +129,11 @@ class MainActivity : ComponentActivity() {
             status = "Renomeando ${toRename.size} arquivo(s)…"
             scope.launch(Dispatchers.IO) {
                 val byName = files.associateBy { it.name }
-                // Passada 1: original -> temporário.
-                val temps = mutableListOf<Triple<DocumentFile, String, String>>()
+                // Passada 1: original -> temporário. Indexado pelo nome
+                // original (não pela posição): se algum arquivo não for
+                // achado e for pulado, a passada 2 não casa o arquivo
+                // errado com o nome errado.
+                val temps = mutableMapOf<String, Triple<DocumentFile, String, String>>()
                 var error: String? = null
                 for ((i, entry) in toRename.withIndex()) {
                     val doc = byName[entry.originalName] ?: continue
@@ -132,10 +143,10 @@ class MainActivity : ComponentActivity() {
                         error = "${entry.originalName}: não foi possível renomear"
                         break
                     }
-                    temps.add(Triple(doc, entry.originalName, temp))
+                    temps[entry.originalName] = Triple(doc, entry.originalName, temp)
                 }
                 if (error != null) {
-                    for ((doc, original, _) in temps) {
+                    for ((doc, original, _) in temps.values) {
                         SafFiles.renameTo(doc, original)
                     }
                     withContext(Dispatchers.Main) {
@@ -145,8 +156,8 @@ class MainActivity : ComponentActivity() {
                 }
                 // Passada 2: temporário -> final.
                 val done = mutableListOf<Pair<String, String>>()
-                for ((i, entry) in toRename.withIndex()) {
-                    val triple = temps.getOrNull(i) ?: continue
+                for (entry in toRename) {
+                    val triple = temps[entry.originalName] ?: continue
                     val (doc, original, _) = triple
                     if (!SafFiles.renameTo(doc, entry.newName)) {
                         error = "$original -> ${entry.newName}: falhou"
@@ -160,7 +171,7 @@ class MainActivity : ComponentActivity() {
                             .firstOrNull { it.name == newName }
                         if (doc != null) SafFiles.renameTo(doc, original)
                     }
-                    for ((doc, original, _) in temps) {
+                    for ((doc, original, _) in temps.values) {
                         if (doc.name?.startsWith(".dxrename-") == true) {
                             SafFiles.renameTo(doc, original)
                         }
@@ -225,6 +236,33 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        pendingPreset?.let { i ->
+            val preset = Presets.ALL[i]
+            AlertDialog(
+                onDismissRequest = { pendingPreset = null },
+                title = { Text("Aplicar preset “${preset.nome}”?") },
+                text = {
+                    Text(
+                        "Seu padrão atual é ${settings.pattern}.\n" +
+                            "O preset usa ${preset.settings.pattern} e vai substituir o seu padrão. " +
+                            "Evento, cliente e tipos também passam a ser os do preset."
+                    )
+                },
+                confirmButton = {
+                    TextButton(onClick = {
+                        presetIndex = i
+                        settings = preset.settings
+                        patternCustom = false
+                        pendingPreset = null
+                        status = "Preset “${preset.nome}” aplicado."
+                    }) { Text("Aplicar preset") }
+                },
+                dismissButton = {
+                    TextButton(onClick = { pendingPreset = null }) { Text("Manter meu padrão") }
+                }
+            )
+        }
+
         MaterialTheme(colorScheme = darkColorScheme(primary = Purple, background = Bg, surface = Color(0xFF1E1A2E))) {
             Scaffold(
                 topBar = {
@@ -285,10 +323,21 @@ class MainActivity : ComponentActivity() {
                                         settings = settings,
                                         presetIndex = presetIndex,
                                         onPreset = { i ->
-                                            presetIndex = i
-                                            settings = Presets.ALL[i].settings
+                                            val preset = Presets.ALL[i]
+                                            if (patternCustom && settings.pattern != preset.settings.pattern) {
+                                                // O usuário digitou o próprio padrão: não apaga
+                                                // sem ele confirmar, como o Windows faz.
+                                                pendingPreset = i
+                                            } else {
+                                                presetIndex = i
+                                                settings = preset.settings
+                                                status = "Preset “${preset.nome}” aplicado."
+                                            }
                                         },
-                                        onSettings = { settings = it }
+                                        onSettings = { new ->
+                                            if (new.pattern != settings.pattern) patternCustom = true
+                                            settings = new
+                                        }
                                     )
                                     else -> ConferirPane(
                                         plan = plan, conflicts = conflicts,

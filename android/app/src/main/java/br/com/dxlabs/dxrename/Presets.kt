@@ -40,7 +40,7 @@ object Presets {
             )
         ),
         Preset(
-            "Só numerar",
+            "Só numerar (mantém o nome original)",
             RenameEngine.Settings(pattern = "{nome}_{seq:03}", evento = "")
         )
     )
