@@ -249,16 +249,19 @@ class MainActivity : ComponentActivity() {
                     )
                 },
                 confirmButton = {
-                    TextButton(onClick = {
-                        presetIndex = i
-                        settings = preset.settings
-                        patternCustom = false
-                        pendingPreset = null
-                        status = "Preset “${preset.nome}” aplicado."
-                    }) { Text("Aplicar preset") }
+                    TextButton(
+                        onClick = {
+                            presetIndex = i
+                            settings = preset.settings
+                            patternCustom = false
+                            pendingPreset = null
+                            status = "Preset “${preset.nome}” aplicado."
+                        },
+                        colors = ButtonDefaults.textButtonColors(contentColor = Color.White)
+                    ) { Text("Aplicar preset") }
                 },
                 dismissButton = {
-                    TextButton(onClick = { pendingPreset = null }) { Text("Manter meu padrão") }
+                    TextButton(onClick = { pendingPreset = null }, colors = ButtonDefaults.textButtonColors(contentColor = Color.White)) { Text("Manter meu padrão") }
                 }
             )
         }
@@ -360,7 +363,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun PastaPane(folderName: String, files: List<DocumentFile>, onPick: () -> Unit) {
         Column(modifier = Modifier.fillMaxSize()) {
-            Button(onClick = onPick, colors = ButtonDefaults.buttonColors(containerColor = Purple)) {
+            Button(onClick = onPick, colors = ButtonDefaults.buttonColors(containerColor = Purple, contentColor = Color.White)) {
                 Text("Escolher pasta")
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -514,12 +517,13 @@ class MainActivity : ComponentActivity() {
                 Button(
                     onClick = onRename,
                     enabled = !renaming && conflicts == 0,
-                    colors = ButtonDefaults.buttonColors(containerColor = Purple),
+                    colors = ButtonDefaults.buttonColors(containerColor = Purple, contentColor = Color.White),
                     modifier = Modifier.weight(1f)
                 ) { Text(if (renaming) "Renomeando…" else "Renomear") }
                 OutlinedButton(
                     onClick = onUndo,
-                    enabled = !renaming && undoAvailable
+                    enabled = !renaming && undoAvailable,
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White)
                 ) { Text("Desfazer") }
             }
         }
